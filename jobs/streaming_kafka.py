@@ -3,7 +3,7 @@ from pyspark.sql.functions import col, split, window, avg
 from pyspark.sql.types import DoubleType, TimestampType
 
 spark = SparkSession.builder \
-    .appName("KafkaSparkStreaming") \
+    .appName("KafkaMarketData") \
     .getOrCreate()
 
 spark.sparkContext.setLogLevel("WARN")
@@ -16,29 +16,33 @@ raw_df = spark.readStream \
     .option("startingOffsets", "latest") \
     .load()
 
-# value viene como binary
-values_df = raw_df.selectExpr("CAST(value AS STRING)")
+# Kafka value -> string
+df = raw_df.selectExpr("CAST(value AS STRING) as value")
 
-# Parseo: ticker,timestamp,price
-parsed_df = values_df.select(
+# Parseo CSV: ticker,timestamp,price
+parsed = df.select(
     split(col("value"), ",").getItem(0).alias("ticker"),
     split(col("value"), ",").getItem(1).cast(TimestampType()).alias("event_time"),
     split(col("value"), ",").getItem(2).cast(DoubleType()).alias("price")
 )
 
 # Ventanas de 30 segundos
-windowed_df = parsed_df.groupBy(
-    window(col("event_time"), "30 seconds"),
-    col("ticker")
-).agg(
-    avg("price").alias("avg_price")
-)
+windowed_avg = parsed \
+    .withWatermark("event_time", "1 minute") \
+    .groupBy(
+        window(col("event_time"), "30 seconds"),
+        col("ticker")
+    ) \
+    .avg("price") \
+    .withColumnRenamed("avg(price)", "avg_price")
 
-query = windowed_df.writeStream \
-    .outputMode("complete") \
+
+query = windowed_avg.writeStream \
+    .outputMode("update") \
     .format("console") \
-    .option("truncate", "false") \
+    .option("truncate", False) \
     .trigger(processingTime="30 seconds") \
     .start()
 
 query.awaitTermination()
+

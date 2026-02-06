@@ -25,31 +25,26 @@ $ git clone "url de este repositorio"
 Una vez dentro del directorio \tp_bigdata será necesario tipear las siguientes líneas para configurar Kafka y Zookeeper:
 
 ```
-$ sudo docker-compose up
+$ docker-compose up -d
 ```
 
 Luego, será necesario abrir tres terminales separadas para ejecutar tres aplicaciones en paralelo (el productor de Spark, el consumidor de Kafka y el streaming de Spark ????). Para ello, será necesario tipear los siguientes comandos:
 
 Primer terminal:
 ```
-$ python producer_simulado.py
+$ docker exec -it node2-kafka bash
+$ kafka-console-consumer --bootstrap-server localhost:9092 --topic market-data --from-beginning
 ```
 
 Segunda terminal:
 ```
-$ docker exec -it node2-kafka bash
-$ kafka-console-consumer \
-$  --bootstrap-server localhost:9092 \
-$  --topic market-data \
-$  --from-beginning
+$ python producer_simulado.py
 ``` 
 
 Tercer terminal:
 ```
 $ docker exec -it node1-spark-master bash
-$ /spark/bin/spark-submit \
-$  --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.0 \
-$  /spark/jobs/streaming_kafka.py
+$ /spark/bin/spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.0 /spark/jobs/streaming_kafka.py
 ```
 
 Para detener el contenedor de docker, es necesario tipear:

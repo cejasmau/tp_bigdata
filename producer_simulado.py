@@ -22,7 +22,7 @@ while True:
     ticker = random.choice(tickers)
     prices[ticker] += random.uniform(-0.5, 0.5)
 
-    event_time = datetime.utcnow().isoformat()
+    event_time = datetime.now().isoformat()
     price = round(prices[ticker], 2)
 
     message = f"{ticker},{event_time},{price}"
