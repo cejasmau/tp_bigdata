@@ -5,24 +5,25 @@ El objetivo de este trabajo es diseñar e implementar un clúster virtualizado q
 # Versiones
 
 - Docker desktop 4.58.0
-- WSL: 2.6.3.0
+- Zookeeper: 7.0.1
 - Docker: 29.1.3
 - Docker-compose: 5.0.1
 - Kafka: 7.0.1
-- Kafka-python: 2.3.0
-- Zookeeper: 
+- Python: 3
+- Pyspark: 3.3.0
+
 
 # Setup
 
 (ünicamente para entorno local)
 
-Para ejecutar este proyecto, será necesario tener previamente instaladas las versiones de las tecnologías descriptas arriba. Puede ser instalado usando:
+Para ejecutar este proyecto, será necesario tener previamente instaladas las versiones de las tecnologías descriptas anteriormente. Puede ser instalado usando:
 
 ```
 $ git clone "url de este repositorio"
 ```
 
-Una vez dentro del directorio \tp_bigdata será necesario tipear la siguiente línea para iniciar el clúster:
+Una vez dentro del directorio \tp_bigdata será necesario tipear en la primer terminal la siguiente línea para iniciar el clúster:
 
 ```
 $ docker-compose up -d
@@ -33,13 +34,13 @@ Luego, será necesario crear el tópico manualmente, para evitar errores:
 docker exec -it kafka kafka-topics --create --topic precios_mercado --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
 ```
 
-Posteriormente, vamos a ejecutar el productor de los datos financieros:
+Posteriormente, en una segunda terminal, vamos a ejecutar el productor de los datos financieros:
 
 ```
 python producer_financiero.py
 ```
 
-Finalmente, para ejecutar Spark dentro del clúster:
+Finalmente, en una tercer terminal, para ejecutar Spark dentro del clúster:
 
 ```
 docker cp procesamiento_spark.py spark-master:/procesamiento_spark.py
