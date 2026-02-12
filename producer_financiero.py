@@ -12,11 +12,11 @@ producer = KafkaProducer(
 topic_nombre = "precios_mercado"
 acciones = ['AAPL', 'TSLA', 'GOOG', 'AMZN', 'MSFT']
 precios = {
-    "AAPL": 275.0,
-    "MSFT": 393.0,
-    "GOOG": 331.0,
-    "AMZN": 222.0,
-    "TSLA": 397.0
+    "AAPL": 267.0,
+    "MSFT": 399.0,
+    "GOOG": 310.0,
+    "AMZN": 197.0,
+    "TSLA": 423.0
 }
 
 print(f" Iniciando envío de datos al tópico: {topic_nombre}")
