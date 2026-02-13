@@ -232,21 +232,36 @@ query.awaitTermination()
 
 ## Pruebas
 
-En primer lugar se verificó el correcto funcionamiento de cada componente: accedimos exitosamente a la interfaz web de Spark, permitiendo confirmar que el Master y sus correspondientes Workers se encontraban activos. En cuanto al Broker de Kafka, verificamos la conectividad de los *listeners* mediante el listado de tópicos activos a través del puerto expuesto y confirmando que la red interna de Docker y el broker estaban operativos. En cuanto a Zookeeper, la verificación resulta indirecta, a través del correcto funcionamiento de Kafka.
+En primer lugar, se verificó el correcto funcionamiento de cada componente: accedimos exitosamente a la interfaz web de Spark, permitiendo confirmar que el Master y sus correspondientes Workers se encontraban activos. En cuanto al Broker de Kafka, verificamos la conectividad de los *listeners* mediante el listado de tópicos activos a través del puerto expuesto y confirmando que la red interna de Docker y el broker estaban operativos. En cuanto a Zookeeper, la verificación resulta indirecta, a través del correcto funcionamiento de Kafka.
 
-![Evidencia de ejecución del clúster en Docker Desktop](imagenes/graf2.png)
+![Verificación del clúster en la interfaz web de Spark](imagenes/graf2.png)
 
+![Verificación del clúster en Docker Desktop](imagenes/graf3.png)
 
+En segundo lugar, a través del panel de estadísticas de Docker Desktop, se monitoreó el estado del clúster y su comportamiento durante la ejecución del pipeline para validar la eficiencia de la arquitectura. De esta manera, pudimos comprobar que ningún servicio (Kafka, Zookeeper o Spark) sufrió reinicios inesperados. Además, se confirmó que los límites de recursos impuestos en el archivo `docker-compose.yml` fueron respetados, evitando que el proceso de Spark interfiriera con el rendimiento del sistema operativo más allá de algunos picos de utilización de CPU. A su vez, la comunicación entre el contenedor de Kafka y los nodos de Spark se mantuvo estable, con una latencia mínima de red interna.
 
-Como prueba funcional del sistema se implementó un caso de uso simple de ingestión de datos. Se enviaron mensajes simulando 
-datos de mercado financiero y, mediante un consumidor Kafka, se verificó la recepción exitosa de los mensajes producidos, 
-confirmando el correcto funcionamiento del flujo productor–broker–consumidor. Este procedimiento valida que el clúster es 
-capaz de manejar eventos en tiempo real, cumpliendo con el objetivo de simular una arquitectura de streaming de datos.
+![Uso de la memoria y CPU por parte del conjunto de los contenedores en Docker Desktop](imagenes/graf4.png){height=200px}
 
-Durante las pruebas el sistema demostró una sincronía impecable. Validamos que el flujo end-to-end funcionara correctamente, 
-desde la creación del mensaje en Python hasta la actualización del promedio de precios en la consola de Spark. Asimismo, 
-al agrupar los datos, logramos una visión clara del mercado en ventanas específicas, obteniendo promedios de precios precisos 
-para cada Ticker de forma casi instantánea.
+![Envío y recepción de la información, uso de la memoria y CPU por parte del contenedor de Kafka](imagenes/graf5.png){height=200px}
+
+En tercer y último lugar, como prueba de integración de la arquitectura propuesta, se procedió a la puesta en marcha del ecosistema distribuido. Esta etapa constituyó una prueba funcional de extremo a extremo, permitiendo verificar que el flujo de datos no presentaba cuellos de botella ni errores de incompatibilidad o codificación entre el productor Python (externo) y el consumidor Spark (interno al clúster). Este procedimiento valida que el clúster fue capaz de manejar eventos en tiempo real, cumpliendo con el objetivo de simular una arquitectura de streaming de datos. Así, los resultados obtenidos en las consolas de salida confirman el correcto funcionamiento del ciclo de vida del dato, logrando una visión un poco más clara del mercado financiero simlulado, cuya visualización es ejemplificada por el siguiente batch:
+
+```text
+
+-------------------------------------------
+Batch: 49
+-------------------------------------------
++-------+---------------+
+|simbolo|precio_promedio|
++-------+---------------+
+|AAPL   |268.21         |
+|GOOG   |309.23         |
+|AMZN   |196.95         |
+|TSLA   |420.93         |
+|MSFT   |399.46         |
++-------+---------------+
+
+```
 
 ## Conclusiones
 
