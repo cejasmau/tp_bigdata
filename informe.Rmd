@@ -14,6 +14,9 @@ output:
 bibliography: referencias.bib
 csl: apa.csl
 nocite: '@*'
+header-includes:
+  - \usepackage{polyglossia}
+  - \setmainlanguage{spanish}
 ---
 
 ## Introducción
@@ -37,7 +40,7 @@ El sistema diseñado consta de tres niveles distintos y cinco nodos:
 ### Arquitectura de infraestructura
 
 La implementación se basó en la tecnología de contenedores Docker, utilizando Docker Compose como orquestador para definir 
-una red aislada denominada *bigdata-network*. Esta red permite la comunicación entre nodos, garantizando un entorno 
+una red virtual aislada denominada *bigdata-network*. Esta red permite la comunicación entre nodos, garantizando un entorno 
 reproducible y escalable.
 
 - **Zookeeper**: servicio de coordinación para gestionar el estado del broker, las cuotas y, lo más importante, la elección de líderes para las  particiones de los temas (topics).
@@ -100,6 +103,7 @@ y devolver los resultados.
     networks:
       - bigdata-network
 
+  # Dos spark-workers idénticos con la misma estructura
   spark-worker:
     image: bde2020/spark-worker:3.3.0-hadoop3.3
     container_name: spark-worker-1
@@ -117,8 +121,7 @@ y devolver los resultados.
       - bigdata-network
 ```
 
-La virtualización mediante Docker permitió cumplir con el requerimiento sin necesidad de máquinas virtuales 
-completas, reduciendo el consumo de recursos y simplificando el despliegue.
+La virtualización mediante Docker permitió cumplir con el requerimiento sin necesidad de máquinas virtuales completas, reduciendo el consumo de recursos y simplificando el despliegue. De todas formas, la separación de roles y la limitación estricta de recursos mediante contenedores posibilitaron la estabilidad del sistema, evitando la sobrecarga.
 
 ### Simulación de datos financieros
 
@@ -225,14 +228,15 @@ query.awaitTermination()
 
 ```
 
+![Flujo de información](imagenes/graf1.png)
 
 ## Pruebas
 
-En primer lugar se verificó el correcto funcionamiento de cada componente:
+En primer lugar se verificó el correcto funcionamiento de cada componente: accedimos exitosamente a la interfaz web de Spark, permitiendo confirmar que el Master y sus correspondientes Workers se encontraban activos. En cuanto al Broker de Kafka, verificamos la conectividad de los *listeners* mediante el listado de tópicos activos a través del puerto expuesto y confirmando que la red interna de Docker y el broker estaban operativos. En cuanto a Zookeeper, la verificación resulta indirecta, a través del correcto funcionamiento de Kafka.
 
--	Spark Master: Acceso exitoso a la interfaz web de Spark (http://localhost:8080), confirmando que el servicio se encontraba operativo.
--	Kafka Broker: Ejecución de comandos administrativos para listar y crear tópicos.
--	Zookeeper: Verificación indirecta a través del correcto funcionamiento de Kafka.
+![Evidencia de ejecución del clúster en Docker Desktop](imagenes/graf2.png)
+
+
 
 Como prueba funcional del sistema se implementó un caso de uso simple de ingestión de datos. Se enviaron mensajes simulando 
 datos de mercado financiero y, mediante un consumidor Kafka, se verificó la recepción exitosa de los mensajes producidos, 

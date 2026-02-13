@@ -1,6 +1,6 @@
 # Introducción
 
-El objetivo de este trabajo es diseñar e implementar un clúster virtualizado que permita simular una infraestructura Big Data orientada al análisis de datos del mercado financiero. Para ello, se utilizó Docker como tecnología de virtualización liviana, desplegando un clúster compuesto por tres nodos que integran Apache Spark, Apache Kafka y Apache Zookeeper.
+El objetivo de este trabajo es diseñar e implementar un clúster virtualizado que permita simular una infraestructura orientada al análisis de grandes volúmenes de datos del mercado financiero. Para ello, se utilizó Docker como tecnología de virtualización liviana, desplegando un clúster compuesto por nodos que integran Spark, Kafka y Zookeeper.
 
 # Versiones
 
@@ -15,18 +15,18 @@ El objetivo de este trabajo es diseñar e implementar un clúster virtualizado q
 
 # Setup
 
-(ünicamente para entorno local)
+(ünicamente para entorno local en Windows)
 
-Para ejecutar este proyecto, será necesario tener previamente instaladas las versiones de las tecnologías descriptas anteriormente. Puede ser instalado usando:
-
-```
-$ git clone "url de este repositorio"
-```
-
-Una vez dentro del directorio \tp_bigdata será necesario tipear en la primer terminal la siguiente línea para iniciar el clúster:
+Para ejecutar este proyecto, será necesario tener previamente instaladas las versiones de las tecnologías descriptas anteriormente. Puede ser replicado usando:
 
 ```
-$ docker-compose up -d
+git clone "url de este repositorio"
+```
+
+Una vez abierto Docker Desktop, dentro del directorio \tp_bigdata será necesario tipear en la primer terminal la siguiente línea para iniciar el clúster:
+
+```
+docker-compose up -d
 ```
 Luego, será necesario crear el tópico manualmente, para evitar errores:
 
@@ -51,11 +51,11 @@ docker exec -it spark-master /spark/bin/spark-submit --packages org.apache.spark
 Para detener el contenedor de docker, es necesario tipear:
 
 ```
-$ docker-compose stop
+docker-compose stop
 ```
 
 Para detener y eliminar todo:
 
 ```
-$ docker-compose down
+docker-compose down
 ```
