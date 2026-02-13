@@ -265,28 +265,23 @@ Batch: 49
 
 ## Conclusiones
 
-En este trabajo se logró implementar exitosamente un clúster Big Data compuesto por tres nodos virtualizados utilizando Docker. 
-La infraestructura desplegada permite simular un entorno realista de ingestión y procesamiento de datos, integrando Apache 
-Spark y Apache Kafka. Podríamos destacar como punto fuerte del proyecto:
+El presente proyecto permitió el diseño y la implementación de un ecosistema de streaming de grandes volúmenes de datos, logrando la transición desde una simulación de datos aislada hacia un flujo de procesamiento distribuido y un análisis en tiempo real. 
 
--	El despliegue de un clúster distribuido con tecnologías ampliamente utilizadas en la industria.
--	La implementación de un caso de uso funcional de ingestión de datos en tiempo real.
--	La resolución de problemas reales asociados a la configuración de Kafka en entornos Docker, demostrando comprensión del 
-funcionamiento de la plataforma.
+El uso de Apache Kafka como broker de mensajes demostró ser una solución consistente para el desacoplamiento entre productores y consumidores de datos. Esta arquitectura permitió que la variabilidad en la recepción de datos financieros no afectara la estabilidad de los nodos de cómputo (*workers*), garantizando la integridad de los mensajes.
 
-La solución desarrollada cumple con los requerimientos planteados y sienta las bases para la extensión hacia escenarios de 
-procesamiento más complejos.
+Además, la implementación de Docker Compose facilitó un entorno controlado y reproducible. La asignación de límites de hardware (CPU y RAM) demostró que es posible ejecutar cargas de trabajo considerables de Spark en entornos con recursos limitados, siempre que los parámetros sean debidamente configurados (como el particionamiento y la gestión de memoria de los workers).
 
-En síntesis, hemos logrado construir una base sólida y reproducible. El uso de Docker ha sido un acierto para la portabilidad, 
-aunque aprendimos que la gestión de scripts mediante volúmenes es un punto clave para la persistencia.
+En el mismo sentido, el uso de la trasmisión de datos estructurados de Spark permitió transformar datos crudos en información de valor con una latencia mínima. Mediante su capacidad de escalamiento horizontal, el incremento en el volumen de información incorporando nuevos activos podría ser solucionado mediante la adición de nodos al clúster, sin comprometer la arquitectura diseñada.
+
+Desde ya, la implementación presentada no estuvo exenta de dificultades: fue necesario un esfuerzo considerable para resolver errores de configuración de los *listeners* de Kafka, así como los desbalances en el procesamiento por lotes de Spark originados por tiempos de ejecución que excedían los intervalos de activación configurados. Cada uno de estos inconvenientes permitió profundizar en el entendimiento del funcionamiento interno de las herramientas utilizadas.
 
 ## Trabajo a futuro
 
-Este pipeline es solo el comienzo. Para llevar esta solución al siguiente nivel, nuestras metas a corto plazo son:
+Creemos que la arquitectura desarrollada sienta las bases para un sistema de análisis financiero más robusto. En ese camino, la transición desde datos simulados hacia bases de datos de mercado o APIs en tiempo real podrían representar un avance interesante, al tener que enfrentar desafíos de ETL como la normalización de formatos heterogéneos en condiciones de alta velocidad, la gestión de volúmenes de datos considerablemente mayores o la limpieza de datos para eliminar ruido o anomalías en intervalos infinitesimales. 
 
--	Ampliación: Crear otras métricas financieras que permitan un análisis más amplio para la toma de decisiones.
--	Visualización: Conectar los resultados a un dashboard para ver las curvas de precios en tiempo real.
--	Almacenamiento: Persistir las métricas en una base de datos No SQL (como Cassandra) para análisis históricos.
+Otro avance podría ser la incorporación de variables estadísticas e indicadores técnicos que permitan tener más información para la toma de decisiones. Cálculos de volatilidad, correlaciones entre activos o la detección de patrones y señales de compra o venta mediante modelos de Machine Learning podrían ser valiosos complementos para enriquecer el análisis.
+
+Finalmente, para transformar los resultados de la consola en información interpretable, se requiere una capa de visualización dinámica, que podría saldarse mediante la creación de tableros que consuman directamente los resultados procesados por la arquitectura. Así, podrían configurarse sistemas de alerta o notificaciones cuando las señales del mercado superen umbrales de riesgo predefinidos.
 
 ## Referencias
 
