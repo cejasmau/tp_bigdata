@@ -22,20 +22,19 @@ header-includes:
 ## Introducción
 
 En el contexto del análisis de grandes volúmenes de datos, las arquitecturas distribuidas juegan un rol fundamental 
-para el procesamiento eficiente y escalable de información. Tecnologías como Apache Spark y Apache Kafka se han convertido
+para el procesamiento eficiente y escalable de información. Tecnologías como Apache Spark y Kafka se han convertido
 en estándares para el procesamiento batch, streaming y la ingestión de datos en tiempo real.
 
 El objetivo de este trabajo es diseñar e implementar un clúster virtualizado que permita simular una infraestructura 
 orientada al análisis de datos del mercado financiero. Para ello, se utilizó Docker como tecnología de virtualización 
-liviana, desplegando un clúster compuesto por tres nodos que integran Apache Spark, Apache Kafka y Apache Zookeeper.
+liviana, desplegando un clúster compuesto por cinco nodos que integran Apache Spark (Master y dos Workers), Apache Kafka y Apache Zookeeper. 
 
 El caso de uso se inspira en un concurso académico realizado en 2022, donde se propuso el análisis en tiempo real de datos 
 de mercado. Dado que la API original ya no se encuentra disponible, se optó por simular la ingestión de datos utilizando 
-Kafka como sistema de mensajería distribuido.
+Kafka como sistema de mensajería distribuido. El repositorio completo del proyecto se encuentra disponible en el enlace: 
+<https://github.com/cejasmau/tp_bigdata>
 
 ## Desarrollo
-
-El sistema diseñado consta de tres niveles distintos y cinco nodos:
 
 ### Arquitectura de infraestructura
 
@@ -81,9 +80,7 @@ Fue configurado con múltiples *listeners* para diferenciar el tráfico interno 
 ```
 
 
-- **Spark**: Tendremos un nodo maestro (*Master*), que no procesa datos directamente sino que su función es asignarle tareas a los nodos trabajadores (*Workers*) y
-gestionar el ciclo de vida de las aplicaciones Spark. Estos últimos recibirán las divisiones del trabajo realizadas por el master, llamadas *tasks*, para ejecutarlas 
-y devolver los resultados.
+- **Spark**: Tendremos un nodo maestro (*Master*), que no procesa datos directamente sino que su función es asignarle tareas a los nodos trabajadores (*Workers*) y gestionar el ciclo de vida de las aplicaciones Spark. Estos últimos recibirán las divisiones del trabajo realizadas por el master, llamadas *tasks*, para ejecutarlas y devolver los resultados.
 
 ```{r, eval=FALSE}
 
@@ -242,7 +239,7 @@ En segundo lugar, a través del panel de estadísticas de Docker Desktop, se mon
 
 ![Uso de la memoria y CPU por parte del conjunto de los contenedores en Docker Desktop](imagenes/graf4.png){height=200px}
 
-![Envío y recepción de la información, uso de la memoria y CPU por parte del contenedor de Kafka](imagenes/graf5.png){height=200px}
+![Estadísticas de consumo de recursos (CPU, memoria, disco y red) del contenedor Spark Master.](imagenes/graf5.png){height=290px}
 
 En tercer y último lugar, como prueba de integración de la arquitectura propuesta, se procedió a la puesta en marcha del ecosistema distribuido. Esta etapa constituyó una prueba funcional de extremo a extremo, permitiendo verificar que el flujo de datos no presentaba cuellos de botella ni errores de incompatibilidad o codificación entre el productor Python (externo) y el consumidor Spark (interno al clúster). Este procedimiento valida que el clúster fue capaz de manejar eventos en tiempo real, cumpliendo con el objetivo de simular una arquitectura de streaming de datos. Así, los resultados obtenidos en las consolas de salida confirman el correcto funcionamiento del ciclo de vida del dato, logrando una visión un poco más clara del mercado financiero simlulado, cuya visualización es ejemplificada por el siguiente batch:
 

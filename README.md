@@ -31,7 +31,7 @@ docker-compose up -d
 Luego, será necesario crear el tópico manualmente, para evitar errores:
 
 ```
-docker exec -it kafka kafka-topics --create --topic precios_mercado --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+docker exec -it kafka kafka-topics --create --topic precios_mercado --bootstrap-server localhost:9092 --partitions 2 --replication-factor 1
 ```
 
 Posteriormente, en una segunda terminal, vamos a ejecutar el productor de los datos financieros:
